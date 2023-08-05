@@ -29,10 +29,103 @@
   Testing the server - run `npm run test-authenticationServer` command in terminal
  */
 
-  const express = require("express")
-  const PORT = 3000;
-  const app = express();
-  // write your logic here, DONT WRITE app.listen(3000) when you're running tests, the tests will automatically start the server
+const express = require("express")
+const PORT = 3000;
+const app = express();
+
+const USERS = [];
+
+app.use(express.json());
+
+
+
+//Create Account
+app.post("/create-account", (req, res) => {
   
-  module.exports = app;
+  //Json object should contain
+  let {username, password, firstName, lastName} = req.body;
   
+  //Check if the username is already exists
+  let userAlreadyExist = false;
+  for (let i = 0; i < USERS.length; i++) {
+    if (USERS[i].username === USERS.username) {
+      userAlreadyExist = true;
+      break;
+    }
+  }
+
+  //Generate a userid and new user object
+  const id = USERS.length + 1;
+  const newUser = {id, username, password, firstName, lastName};
+  //Condition for creating user account
+  if (userAlreadyExist) {
+    res.status(400).send("Username already exists");
+  } else {
+    USERS.push(newUser);
+    console.log(newUser);
+    res.status(200).send("Signup successfull");
+  }
+});
+
+
+
+//User login
+app.post("/login", (req, res) => {
+  let {username, password} = req.body;
+
+  let userFound = null;
+
+  for (let i = 0; i < USERS.length; i++) {
+    if (USERS[i].username === username && USERS[i].password === password) {
+      userFound = USERS[i];
+      break;
+    }
+  }
+
+  if (userFound) {
+    res.json({
+      id: userFound.id,
+      firstName: userFound.firstName,
+      lastName: userFound.lastName
+    });
+  } else {
+    res.status(401).json({ error: 'Invalid credentials' });
+  }
+});
+
+
+//List users
+app.get("/data", (req, res) => {
+  var email = req.headers.email;
+  var password = req.header.password;
+  let userFound = false;
+  for (var i = 0; i < users.length; i++) {
+    if (users[i].email === user.email && users[i].password === user.password) {
+      userFound = true;
+      break;
+    }
+  }
+
+  if (userFound) {
+    let usersToReturn = [];
+    for (let i = 0; i < users.length; i++) {
+      usersToReturn.push({
+        firstName: users[i].firstName,
+        lastName: users[i].lastName,
+        email: users[i].email
+      });
+    }
+    res.json({
+      users
+    });
+  } else {
+    res.sendStatus(401);
+  }
+})
+
+
+function started() {
+  console.log(`Example app listening on port ${PORT}`)
+}
+app.listen(PORT, started)
+module.exports = app;
