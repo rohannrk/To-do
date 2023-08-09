@@ -40,12 +40,9 @@ app.use(express.json());
 
 
 //Create Account
-app.post("/create-account", (req, res) => {
-  
-  //Json object should contain
-  let {username, password, firstName, lastName} = req.body;
-  
-  //Check if the username is already exists
+app.post("/signup", (req, res) => {
+  let { username, password, firstName, lastName } = req.body;
+
   let userAlreadyExist = false;
   for (let i = 0; i < USERS.length; i++) {
     if (USERS[i].username === USERS.username) {
@@ -53,11 +50,8 @@ app.post("/create-account", (req, res) => {
       break;
     }
   }
-
-  //Generate a userid and new user object
   const id = USERS.length + 1;
-  const newUser = {id, username, password, firstName, lastName};
-  //Condition for creating user account
+  const newUser = { id, username, password, firstName, lastName };
   if (userAlreadyExist) {
     res.status(400).send("Username already exists");
   } else {
@@ -71,17 +65,14 @@ app.post("/create-account", (req, res) => {
 
 //User login
 app.post("/login", (req, res) => {
-  let {username, password} = req.body;
-
+  let { username, password } = req.body;
   let userFound = null;
-
   for (let i = 0; i < USERS.length; i++) {
     if (USERS[i].username === username && USERS[i].password === password) {
       userFound = USERS[i];
       break;
     }
   }
-
   if (userFound) {
     res.json({
       id: userFound.id,
@@ -96,11 +87,11 @@ app.post("/login", (req, res) => {
 
 //List users
 app.get("/data", (req, res) => {
-  var email = req.headers.email;
-  var password = req.header.password;
+  var username = req.headers.username;
+  var password = req.headers.password;
   let userFound = false;
-  for (var i = 0; i < users.length; i++) {
-    if (users[i].email === user.email && users[i].password === user.password) {
+  for (var i = 0; i < USERS.length; i++) {
+    if (USERS[i].username === username && USERS[i].password === password) {
       userFound = true;
       break;
     }
@@ -108,16 +99,14 @@ app.get("/data", (req, res) => {
 
   if (userFound) {
     let usersToReturn = [];
-    for (let i = 0; i < users.length; i++) {
+    for (let i = 0; i < USERS.length; i++) {
       usersToReturn.push({
-        firstName: users[i].firstName,
-        lastName: users[i].lastName,
-        email: users[i].email
+        firstName: USERS[i].firstName,
+        lastName: USERS[i].lastName,
+        username: USERS[i].username
       });
     }
-    res.json({
-      users
-    });
+    res.json(USERS);
   } else {
     res.sendStatus(401);
   }
